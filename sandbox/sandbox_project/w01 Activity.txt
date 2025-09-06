@@ -1,0 +1,63 @@
+static void DoSomething(int n)
+{
+  for (int i = 0; i < n; i++)
+  {
+    Console.WriteLine(n * n);
+  }
+
+  for (i = n; i > 0; i--)
+  {
+    Console.WriteLine(n * n * n);
+  }
+}
+
+This is a O(n) function.
+
+static void DoSomethingElse(List<string> words)
+{
+  for (int i = 0; i < words.Count; i++)
+  {
+    for (int j = 0; j < words.Count; j++)
+    {
+      Console.WriteLine(".");
+    }
+  }
+}
+This function is O(n^2) which is still on O(n) function because the exponent is of a small order.
+
+static void DoAnotherThing(List<string> words)
+{
+  string sentence = "The quick brown fox jumps over the lazy dog";
+  for (int i = 0; i < words.Count; i++)
+  {
+    for (int j = 0; j < sentence.Length; j++)
+    {
+      Console.WriteLine(".");
+    }
+  }
+}
+
+data.Add(1);
+        data.Add(2);
+        data.Add(3);
+        data.Add(4);
+        data.Add(5);
+        data.Add(6);
+        data.Add(7);
+        data.Add(8);
+        data.Add(9);
+
+        List<int> getIndexToFlipFrom = data.GetRange(data.Count - amount, amount);
+        data.RemoveRange(data.Count - amount, amount);
+        List<int> addedList = getIndexToFlipFrom.Concat(data).ToList();
+
+        foreach (var nums in addedList)
+        {
+            Console.WriteLine("<List>{" + string.Join(", ", nums) + "}");
+        }
+        RotateListRight(addedList, 2);
+    }
+
+}
+
+This fuction is O(n).

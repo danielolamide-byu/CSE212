@@ -8,9 +8,37 @@ public static class ArraySelector
         var intResult = ListSelector(l1, l2, select);
         Console.WriteLine("<int[]>{" + string.Join(", ", intResult) + "}"); // <int[]>{1, 2, 3, 2, 4, 4, 6, 8, 10, 5}
     }
+    
 
     private static int[] ListSelector(int[] list1, int[] list2, int[] select)
+    
     {
+        int array1 = 0;
+        int array2 = 0;
+        foreach (int items in select)
+        {
+            if (items == 1)
+            {
+                array1.Add(items);
+            }
+            else
+            {
+                array2.Add(items);
+            }
+        }
+
+
+        // foreach (int num in select)
+        // {
+        //     if (num == 1)
+        //     {
+        //         list1 + 1;
+        //     }
+        //     else if (num == 2)
+        //     {
+        //         list2 + 1;
+        //     }
+        // }
         return [];
     }
 }
