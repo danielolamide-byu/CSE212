@@ -1,26 +1,29 @@
-/// <summary>
-/// A basic implementation of a Queue
-/// </summary>
 public class PersonQueue
 {
-    private readonly List<Person> _queue = new();
+    // Use the built-in Queue<Person> class
+    private readonly Queue<Person> _queue = new();
 
     public int Length => _queue.Count;
 
     /// <summary>
-    /// Add a person to the queue
+    /// Adds a person to the queue. O(1) operation.
     /// </summary>
-    /// <param name="person">The person to add</param>
     public void Enqueue(Person person)
     {
-        _queue.Insert(0, person);
+        _queue.Enqueue(person);
     }
 
+    /// <summary>
+    /// Removes and returns a person from the queue. O(1) operation.
+    /// </summary>
     public Person Dequeue()
     {
-        var person = _queue[0];
-        _queue.RemoveAt(0);
-        return person;
+        // Add a check to prevent InvalidOperationException on an empty queue
+        if (_queue.Count == 0)
+        {
+            throw new InvalidOperationException("Queue is empty.");
+        }
+        return _queue.Dequeue();
     }
 
     public bool IsEmpty()
