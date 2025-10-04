@@ -21,8 +21,31 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
+        HashSet<string> set = new HashSet<string>(words);
+        List<string> result = new List<string>();
+
+        foreach (string word in words)
+        {
+            // skip double-letter words like "aa"
+            if (word[0] == word[1])
+                continue;
+
+            string reversed = new string(new char[] { word[1], word[0] });
+
+            if (set.Contains(reversed))
+            {
+                // Add the pair in consistent order (e.g., alphabetical)
+                string pair = word.CompareTo(reversed) < 0
+                    ? $"{word} & {reversed}"
+                    : $"{reversed} & {word}";
+
+                if (!result.Contains(pair))
+                    result.Add(pair);
+            }
+        }
+        
         // TODO Problem 1 - ADD YOUR CODE HERE
-        return [];
+        return result;
     }
 
     /// <summary>
@@ -42,6 +65,18 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
+
+            if (fields.Length < 4)
+                continue;
+
+            string degree = fields[3].Trim();
+            
+
+            if (fields.IsNullOrEmpty(degree))
+                continue;
+
+            if (degree.ContainsKey(degree))
+                degree[degree] = 1;
             // TODO Problem 2 - ADD YOUR CODE HERE
         }
 
@@ -66,7 +101,45 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-        // TODO Problem 3 - ADD YOUR CODE HERE
+         if (word1 == null || word2 == null)
+            return false;
+
+        // Normalize both words: remove spaces and make lowercase
+        word1 = word1.Replace(" ", "").ToLower();
+        word2 = word2.Replace(" ", "").ToLower();
+
+        // Quick length check
+        if (word1.Length != word2.Length)
+            return false;
+
+        //Count letters in word1
+        Dictionary<char, int> letterCount = new Dictionary<char, int>();
+        foreach (char c in word1)
+        {
+            if (letterCount.ContainsKey(c))
+                letterCount[c]++;
+            else
+                letterCount[c] = 1;
+        }
+
+        //Subtract counts using letters in word2
+        foreach (char c in word2)
+        {
+            if (!letterCount.ContainsKey(c))
+                return false; // letter not found
+
+            letterCount[c]--;
+            if (letterCount[c] < 0)
+                return false; // more of this letter in word2
+        }
+
+        // Check that all counts are zero
+        foreach (int count in letterCount.Values)
+        {
+            if (count != 0)
+                return false;
+        }
+
         return false;
     }
 
