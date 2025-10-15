@@ -1,5 +1,7 @@
 using System.Text.Json;
 
+using System.Collections.Generic;
+
 public static class SetsAndMaps
 {
     /// <summary>
@@ -21,31 +23,41 @@ public static class SetsAndMaps
     /// <param name="words">An array of 2-character words (lowercase, no duplicates)</param>
     public static string[] FindPairs(string[] words)
     {
-        HashSet<string> set = new HashSet<string>(words);
-        List<string> result = new List<string>();
+        // TODO Problem 1 - ADD YOUR CODE HERE
+        var wordSet = new HashSet<string>(words);
+        var pairs = new List<string>();
+        var processed = new HashSet<string>();
 
-        foreach (string word in words)
+        foreach (var word in words)
         {
-            // skip double-letter words like "aa"
-            if (word[0] == word[1])
+            // Skip if already processed this word
+            if (processed.Contains(word))
                 continue;
 
-            string reversed = new string(new char[] { word[1], word[0] });
-
-            if (set.Contains(reversed))
+            // Skip words with same character (like "aa") 
+            if (word[0] == word[1])
             {
-                // Add the pair in consistent order (e.g., alphabetical)
-                string pair = word.CompareTo(reversed) < 0
-                    ? $"{word} & {reversed}"
-                    : $"{reversed} & {word}";
+                processed.Add(word);
+                continue;
+            }
 
-                if (!result.Contains(pair))
-                    result.Add(pair);
+            // Create the reverse of the word
+            var reverse = new string([word[1], word[0]]);
+
+            // Check if the reverse exists in the set and hasn't been processed
+            if (wordSet.Contains(reverse) && !processed.Contains(reverse))
+            {
+                pairs.Add($"{reverse} & {word}");
+                processed.Add(word);
+                processed.Add(reverse);
+            }
+            else
+            {
+                processed.Add(word);
             }
         }
-        
-        // TODO Problem 1 - ADD YOUR CODE HERE
-        return result;
+
+        return pairs.ToArray();
     }
 
     /// <summary>
@@ -65,19 +77,27 @@ public static class SetsAndMaps
         foreach (var line in File.ReadLines(filename))
         {
             var fields = line.Split(",");
-
-            if (fields.Length < 4)
-                continue;
-
-            string degree = fields[3].Trim();
-            
-
-            if (fields.IsNullOrEmpty(degree))
-                continue;
-
-            if (degree.ContainsKey(degree))
-                degree[degree] = 1;
             // TODO Problem 2 - ADD YOUR CODE HERE
+
+            // Check if we have at least 4 fields (degree is in column 4, index 3)
+            if (fields.Length > 3)
+            {
+                var degree = fields[3].Trim(); // Get degree and remove whitespace
+
+                // Skip empty degrees
+                if (!string.IsNullOrEmpty(degree))
+                {
+                    // If degree already exists, increment count; otherwise, add with count 1
+                    if (degrees.ContainsKey(degree))
+                    {
+                        degrees[degree]++;
+                    }
+                    else
+                    {
+                        degrees[degree] = 1;
+                    }
+                }
+            }
         }
 
         return degrees;
@@ -101,46 +121,44 @@ public static class SetsAndMaps
     /// </summary>
     public static bool IsAnagram(string word1, string word2)
     {
-         if (word1 == null || word2 == null)
-            return false;
+        // TODO Problem 3 - ADD YOUR CODE HERE
 
-        // Normalize both words: remove spaces and make lowercase
-        word1 = word1.Replace(" ", "").ToLower();
-        word2 = word2.Replace(" ", "").ToLower();
+        // Convert to lowercase and remove spaces
+        word1 = word1.ToLower().Replace(" ", "");
+        word2 = word2.ToLower().Replace(" ", "");
 
-        // Quick length check
+        // If lengths are different, they can't be anagrams
         if (word1.Length != word2.Length)
             return false;
 
-        //Count letters in word1
-        Dictionary<char, int> letterCount = new Dictionary<char, int>();
-        foreach (char c in word1)
+        // Count characters in word1
+        var charCount = new Dictionary<char, int>();
+        foreach (var c in word1)
         {
-            if (letterCount.ContainsKey(c))
-                letterCount[c]++;
+            if (charCount.ContainsKey(c))
+                charCount[c]++;
             else
-                letterCount[c] = 1;
+                charCount[c] = 1;
         }
 
-        //Subtract counts using letters in word2
-        foreach (char c in word2)
+        // Subtract character counts based on word2
+        foreach (var c in word2)
         {
-            if (!letterCount.ContainsKey(c))
-                return false; // letter not found
-
-            letterCount[c]--;
-            if (letterCount[c] < 0)
-                return false; // more of this letter in word2
-        }
-
-        // Check that all counts are zero
-        foreach (int count in letterCount.Values)
-        {
-            if (count != 0)
+            if (charCount.ContainsKey(c))
+            {
+                charCount[c]--;
+                if (charCount[c] == 0)
+                    charCount.Remove(c);
+            }
+            else
+            {
+                // Character in word2 that's not in word1
                 return false;
+            }
         }
 
-        return false;
+        // If all characters matched, dictionary should be empty
+        return charCount.Count == 0;
     }
 
     /// <summary>
@@ -174,6 +192,22 @@ public static class SetsAndMaps
         // on those classes so that the call to Deserialize above works properly.
         // 2. Add code below to create a string out each place a earthquake has happened today and its magitude.
         // 3. Return an array of these string descriptions.
-        return [];
+
+        var earthquakeSummaries = new List<string>();
+
+        if (featureCollection?.Features != null)
+        {
+            foreach (var feature in featureCollection.Features)
+            {
+                if (feature.Properties != null)
+                {
+                    var place = feature.Properties.Place ?? "Unknown location";
+                    var magnitude = feature.Properties.Mag;
+                    earthquakeSummaries.Add($"{place} - Mag {magnitude}");
+                }
+            }
+        }
+
+        return earthquakeSummaries.ToArray();
     }
 }
